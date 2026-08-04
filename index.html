@@ -1,0 +1,1309 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Illuminated Word</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #11162a;
+        --bg-soft: #171d38;
+        --surface: rgba(255, 255, 255, 0.045);
+        --surface-hover: rgba(255, 255, 255, 0.07);
+        --text: #f3efe4;
+        --text-dim: rgba(243, 239, 228, 0.64);
+        --text-faint: rgba(243, 239, 228, 0.4);
+        --gold: #d9b44a;
+        --gold-soft: #f0d488;
+        --clay: #c1633e;
+        --sage: #7fae7f;
+        --border: rgba(217, 180, 74, 0.2);
+        --border-strong: rgba(217, 180, 74, 0.45);
+        --radius: 14px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background:
+          radial-gradient(
+            1100px 600px at 12% -10%,
+            rgba(217, 180, 74, 0.1),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 500px at 88% 110%,
+            rgba(193, 99, 62, 0.09),
+            transparent 55%
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family: "Source Serif 4", serif;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+      }
+      a {
+        color: inherit;
+      }
+      ::selection {
+        background: var(--gold);
+        color: var(--bg);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+          scroll-behavior: auto !important;
+        }
+      }
+      @keyframes flicker {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        45% {
+          opacity: 0.85;
+        }
+        50% {
+          opacity: 0.97;
+        }
+        72% {
+          opacity: 0.9;
+        }
+      }
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      header {
+        padding: 20px 6vw;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(17, 22, 42, 0.86);
+        backdrop-filter: blur(10px) saturate(140%);
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.3rem;
+        cursor: pointer;
+        letter-spacing: -0.01em;
+      }
+      .brand svg {
+        width: 22px;
+        height: 22px;
+        color: var(--gold-soft);
+        animation: flicker 5s ease-in-out infinite;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Inter", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 500;
+        flex-wrap: wrap;
+      }
+      nav a {
+        text-decoration: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: all 0.18s;
+        padding: 8px 14px;
+        border-radius: 999px;
+      }
+      nav a:hover {
+        color: var(--text);
+        background: var(--surface);
+      }
+      nav a.active {
+        color: var(--bg);
+        background: var(--gold-soft);
+        font-weight: 600;
+      }
+
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 52px 6vw 100px;
+      }
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+        animation: rise 0.4s ease both;
+      }
+
+      .eyebrow {
+        font-family: "Inter", sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gold-soft);
+        margin-bottom: 10px;
+      }
+      .section-title {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+        letter-spacing: -0.01em;
+        margin: 0 0 10px;
+      }
+      .section-note {
+        color: var(--text-dim);
+        font-size: 0.98rem;
+        line-height: 1.6;
+        margin: 0 0 30px;
+        max-width: 600px;
+      }
+
+      .btn {
+        font-family: "Inter", sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        padding: 12px 22px;
+        border-radius: 999px;
+        cursor: pointer;
+        border: 1px solid var(--border-strong);
+        background: transparent;
+        color: var(--gold-soft);
+        transition: all 0.2s;
+      }
+      .btn.solid {
+        background: var(--gold-soft);
+        color: var(--bg);
+        border-color: var(--gold-soft);
+      }
+      .btn.solid:hover {
+        background: var(--gold);
+        transform: translateY(-1px);
+      }
+      .btn:not(.solid):hover {
+        background: var(--surface);
+        border-color: var(--gold);
+      }
+      .btn.small {
+        padding: 8px 16px;
+        font-size: 0.74rem;
+      }
+      .btn:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible,
+      select:focus-visible {
+        outline: 2px solid var(--gold-soft);
+        outline-offset: 2px;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: "Source Serif 4", serif;
+        font-size: 0.95rem;
+        padding: 12px 14px;
+        border-radius: 10px;
+        outline: none;
+      }
+
+      .banner {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        background: rgba(217, 180, 74, 0.08);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin-bottom: 26px;
+        font-family: "Inter", sans-serif;
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        line-height: 1.55;
+      }
+      .banner .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--clay);
+        margin-top: 6px;
+        flex-shrink: 0;
+        animation: flicker 2s ease-in-out infinite;
+      }
+      .banner strong {
+        color: var(--gold-soft);
+        font-weight: 600;
+      }
+      .banner code {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.82em;
+      }
+      .banner.hidden {
+        display: none;
+      }
+
+      .article-card {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 26px;
+        margin-bottom: 16px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s,
+          background 0.2s;
+        cursor: pointer;
+        animation: rise 0.45s ease both;
+      }
+      .article-card:hover {
+        border-color: var(--border-strong);
+        transform: translateY(-3px);
+        background: var(--surface-hover);
+      }
+      .pill {
+        display: inline-block;
+        font-family: "Inter", sans-serif;
+        font-size: 0.66rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--clay);
+        background: rgba(193, 99, 62, 0.12);
+        padding: 4px 10px;
+        border-radius: 999px;
+      }
+      .article-card h3 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.4rem;
+        margin: 12px 0 8px;
+        letter-spacing: -0.01em;
+      }
+      .article-card p {
+        color: var(--text-dim);
+        font-size: 0.94rem;
+        line-height: 1.65;
+        margin: 0;
+      }
+      .article-meta {
+        margin-top: 16px;
+        font-family: "Inter", sans-serif;
+        font-size: 0.72rem;
+        color: var(--text-faint);
+        letter-spacing: 0.03em;
+      }
+
+      .article-full h2 {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 2.1rem;
+        margin: 8px 0 4px;
+        letter-spacing: -0.01em;
+      }
+      .article-full .body-text {
+        white-space: pre-wrap;
+        line-height: 1.9;
+        font-size: 1.06rem;
+        color: rgba(243, 239, 228, 0.92);
+        margin-top: 22px;
+      }
+      .back-link {
+        font-family: "Inter", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--gold-soft);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 24px;
+      }
+      .back-link:hover {
+        color: var(--gold);
+      }
+
+      .qa-card {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 14px;
+        animation: rise 0.45s ease both;
+      }
+      .qa-card .q {
+        font-family: "Fraunces", serif;
+        font-weight: 600;
+        font-size: 1.22rem;
+        color: var(--gold-soft);
+        margin: 10px 0 12px;
+        letter-spacing: -0.005em;
+      }
+      .qa-card .a {
+        line-height: 1.8;
+        color: rgba(243, 239, 228, 0.88);
+        white-space: pre-wrap;
+      }
+
+      .bible-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .bible-controls input {
+        flex: 2;
+        min-width: 200px;
+      }
+      .bible-controls select {
+        flex: 1;
+        min-width: 130px;
+      }
+      .bible-result {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        padding: 32px;
+        border-radius: var(--radius);
+        min-height: 140px;
+      }
+      .bible-ref {
+        font-family: "Inter", sans-serif;
+        font-size: 0.76rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--gold-soft);
+        margin-bottom: 14px;
+      }
+      .bible-text {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-weight: 500;
+        font-size: 1.35rem;
+        line-height: 1.7;
+        color: var(--text);
+      }
+      .hint {
+        color: var(--text-faint);
+        font-size: 0.85rem;
+        margin-top: 16px;
+        font-family: "Inter", sans-serif;
+      }
+      .quick-refs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+      }
+      .quick-refs button {
+        font-family: "Inter", sans-serif;
+        font-size: 0.74rem;
+        font-weight: 500;
+        padding: 9px 15px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-dim);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+      .quick-refs button:hover {
+        border-color: var(--gold);
+        color: var(--gold-soft);
+        background: var(--surface);
+      }
+
+      .listen-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      /* ---------- Interactions: like / share / comment ---------- */
+      .interact-bar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 22px;
+        flex-wrap: wrap;
+      }
+      .interact-btn {
+        font-family: "Inter", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+      .interact-btn:hover {
+        border-color: var(--gold);
+        color: var(--gold-soft);
+      }
+      .interact-btn.liked {
+        border-color: var(--clay);
+        color: var(--clay);
+        background: rgba(193, 99, 62, 0.1);
+      }
+      .interact-btn:disabled {
+        cursor: default;
+      }
+      .interact-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .comments-section {
+        margin-top: 28px;
+        border-top: 1px solid var(--border);
+        padding-top: 22px;
+      }
+      .comments-heading {
+        font-family: "Inter", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--gold-soft);
+        margin-bottom: 16px;
+      }
+      .comment-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+      }
+      .comment-item .cname {
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--gold-soft);
+      }
+      .comment-item .ctime {
+        font-family: "Inter", sans-serif;
+        font-size: 0.68rem;
+        color: var(--text-faint);
+        margin-left: 8px;
+      }
+      .comment-item .ctext {
+        margin-top: 6px;
+        font-size: 0.92rem;
+        line-height: 1.6;
+        color: rgba(243, 239, 228, 0.88);
+        white-space: pre-wrap;
+      }
+      .comment-form {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .comment-form input,
+      .comment-form textarea {
+        font-size: 0.9rem;
+      }
+      .comment-form textarea {
+        min-height: 80px;
+      }
+      .comment-status {
+        font-family: "Inter", sans-serif;
+        font-size: 0.78rem;
+        color: var(--sage);
+        min-height: 1.1em;
+      }
+      .comment-status.error {
+        color: var(--clay);
+      }
+      .no-comments {
+        color: var(--text-faint);
+        font-family: "Inter", sans-serif;
+        font-size: 0.85rem;
+      }
+
+      /* Themed decorative backgrounds for shared Bible verse cards */
+      .bible-result {
+        position: relative;
+        overflow: hidden;
+        transition: background 0.4s ease;
+      }
+      .bible-result.theme-dawn {
+        background: linear-gradient(
+          150deg,
+          rgba(217, 180, 74, 0.16),
+          rgba(193, 99, 62, 0.1) 60%,
+          var(--surface)
+        );
+      }
+      .bible-result.theme-night {
+        background: linear-gradient(
+          150deg,
+          rgba(74, 90, 180, 0.18),
+          rgba(23, 29, 56, 0.4) 60%,
+          var(--surface)
+        );
+      }
+      .bible-result.theme-forest {
+        background: linear-gradient(
+          150deg,
+          rgba(95, 138, 95, 0.16),
+          rgba(217, 180, 74, 0.08) 60%,
+          var(--surface)
+        );
+      }
+      .bible-result.theme-desert {
+        background: linear-gradient(
+          150deg,
+          rgba(193, 99, 62, 0.18),
+          rgba(217, 180, 74, 0.12) 60%,
+          var(--surface)
+        );
+      }
+      .bible-result.theme-ocean {
+        background: linear-gradient(
+          150deg,
+          rgba(74, 150, 180, 0.16),
+          rgba(23, 29, 56, 0.3) 60%,
+          var(--surface)
+        );
+      }
+      .bible-result::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.5;
+        background-image: radial-gradient(
+          circle at 85% 12%,
+          rgba(255, 255, 255, 0.1) 0,
+          transparent 40%
+        );
+      }
+      .bible-result > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 56px 24px;
+        color: var(--text-faint);
+        font-family: "Inter", sans-serif;
+        font-size: 0.92rem;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius);
+      }
+
+      footer {
+        padding: 40px 6vw 50px;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        font-family: "Inter", sans-serif;
+        font-size: 0.8rem;
+        color: var(--text-faint);
+        line-height: 1.7;
+      }
+      footer .verse {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-size: 1.05rem;
+        color: var(--gold-soft);
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      body.access-mode {
+        font-size: 1.16rem;
+      }
+      body.access-mode .bible-text {
+        font-size: 1.55rem;
+        line-height: 1.85;
+      }
+      body.access-mode .article-full .body-text {
+        font-size: 1.25rem;
+      }
+      body.access-mode .qa-card .a {
+        font-size: 1.1rem;
+      }
+
+      .status-msg.error {
+        color: var(--clay) !important;
+      }
+
+      @media (max-width: 640px) {
+        nav {
+          gap: 2px;
+        }
+        nav a {
+          padding: 7px 11px;
+          font-size: 0.75rem;
+        }
+        header {
+          padding: 16px 5vw;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand" onclick="go('home')">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path
+            d="M12 2C8 6 4 8 4 13a8 8 0 0016 0c0-5-4-7-8-11z"
+            fill="currentColor"
+            opacity="0.9"
+          />
+        </svg>
+        The Illuminated Word
+      </div>
+      <nav id="navRow">
+        <a onclick="go('home')" data-view="home">Read</a>
+        <a onclick="go('qa')" data-view="qa">Questions</a>
+        <a onclick="go('ask')" data-view="ask">Ask</a>
+        <a onclick="go('bible')" data-view="bible">Bible</a>
+        <a onclick="toggleAccessMode()" id="accessToggle">Large Print</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="view active" id="view-home">
+        <div class="eyebrow">The Feed</div>
+        <div class="section-title">Reflections & Teaching</div>
+        <p class="section-note">
+          Writing shared freely, open to anyone who visits — no account needed
+          to read.
+        </p>
+        <div class="banner hidden" id="feedBanner">
+          <span class="dot"></span>
+          <div></div>
+        </div>
+        <div id="feedList"></div>
+      </div>
+
+      <div class="view" id="view-article">
+        <span class="back-link" onclick="go('home')"
+          >&larr; Back to the feed</span
+        >
+        <div class="article-full" id="articleContent"></div>
+      </div>
+
+      <div class="view" id="view-qa">
+        <div class="eyebrow">Questions & Answers</div>
+        <div class="section-title">Honest Questions</div>
+        <p class="section-note">
+          Questions about faith and scripture, answered plainly — in the spirit
+          of GotQuestions.
+        </p>
+        <div class="banner hidden" id="qaBanner">
+          <span class="dot"></span>
+          <div></div>
+        </div>
+        <div id="qaList"></div>
+      </div>
+
+      <div class="view" id="view-ask">
+        <div class="eyebrow">Ask</div>
+        <div class="section-title">Ask a Question</div>
+        <p class="section-note">
+          Submit any honest question about faith or scripture. It's reviewed and
+          answered before appearing on the Questions page — not posted
+          automatically.
+        </p>
+        <div class="field">
+          <label>Your Name (optional)</label
+          ><input id="askName" type="text" placeholder="Anonymous is fine" />
+        </div>
+        <div class="field">
+          <label>Your Question</label
+          ><textarea
+            id="askQuestion"
+            placeholder="e.g. How do I forgive someone who hasn't apologized?"
+            maxlength="500"
+          ></textarea>
+        </div>
+        <input
+          type="text"
+          id="askHoneypot"
+          name="website"
+          autocomplete="off"
+          tabindex="-1"
+          style="position: absolute; left: -9999px; width: 1px; height: 1px"
+          aria-hidden="true"
+        />
+        <button class="btn solid" onclick="submitQuestion()">
+          Submit Question
+        </button>
+        <div
+          class="status-msg"
+          id="askStatus"
+          style="
+            font-family: &quot;Inter&quot;, sans-serif;
+            font-size: 0.85rem;
+            margin-top: 14px;
+            min-height: 1.2em;
+            color: var(--sage);
+          "
+        ></div>
+      </div>
+
+      <div class="view" id="view-bible">
+        <div class="eyebrow">Scripture</div>
+        <div class="section-title">Read the Bible</div>
+        <p class="section-note">
+          Pulled live from a free public Bible API. Type a reference like
+          <em>John 3:16</em> or <em>Psalm 23</em>.
+        </p>
+        <div class="quick-refs">
+          <button onclick="loadVerse('John 3:16')">John 3:16</button>
+          <button onclick="loadVerse('Psalm 23')">Psalm 23</button>
+          <button onclick="loadVerse('Romans 8:28')">Romans 8:28</button>
+          <button onclick="loadVerse('Philippians 4:13')">
+            Philippians 4:13
+          </button>
+          <button onclick="loadVerse('1 Corinthians 13')">
+            1 Corinthians 13
+          </button>
+        </div>
+        <div class="bible-controls">
+          <input
+            id="bibleRef"
+            type="text"
+            placeholder="Enter a reference, e.g. Romans 8:28"
+            onkeydown="if (event.key === 'Enter') loadVerse();"
+          />
+          <select id="bibleTranslation">
+            <option value="kjv">King James (KJV)</option>
+            <option value="web">World English Bible</option>
+            <option value="bbe">Bible in Basic English</option>
+          </select>
+          <button class="btn solid" onclick="loadVerse()">Read</button>
+        </div>
+        <div class="bible-result" id="bibleResult">
+          <p class="hint">
+            Enter a reference above, or choose one of the quick links.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <span class="verse"
+        >"Thy Word is a lamp unto my feet, and a light unto my path."</span
+      >
+      Psalm 119:105 — A shared, public space for anyone who visits.
+    </footer>
+
+    <script>
+      const API_BASE = "https://faith-institute.onrender.com/";
+
+      const SAMPLE_ARTICLES = [
+        {
+          id: "sample_a1",
+          title: "Starting Each Morning in Stillness",
+          tag: "Reflection",
+          body: "Before the noise of the day begins, there is a quiet worth protecting. Even a few minutes spent still — reading a single verse, breathing, listening — can reset the whole shape of a day.\n\nScripture doesn't ask us to arrive with answers. It asks us to arrive.",
+          createdAt: Date.now() - 86400000 * 2,
+        },
+        {
+          id: "sample_a2",
+          title: "What It Means to Wait on God",
+          tag: "Teaching",
+          body: 'Waiting is rarely passive in scripture. Those who "wait upon the Lord" are pictured renewing their strength, not standing still. Waiting is trust in motion — showing up, staying faithful, while the outcome is still unclear.',
+          createdAt: Date.now() - 86400000 * 5,
+        },
+      ];
+      const SAMPLE_QA = [
+        {
+          id: "sample_q1",
+          tag: "Salvation",
+          question: "What must I do to be saved?",
+          answer:
+            "Scripture is direct about this: believe in the Lord Jesus, and you will be saved (Acts 16:31). It is received by faith, not earned by effort — a gift, not a wage.",
+        },
+        {
+          id: "sample_q2",
+          tag: "Difficult Passages",
+          question: "Why does God allow suffering?",
+          answer:
+            "This is one of the oldest questions in scripture, wrestled with openly in books like Job. The Bible does not offer a single tidy answer, but it consistently points to a God who is present in suffering, not distant from it, and who promises it will not have the final word.",
+        },
+        {
+          id: "sample_q3",
+          tag: "Daily Life",
+          question: "How do I actually hear from God?",
+          answer:
+            "Most often, quietly — through scripture read prayerfully, through conviction, through counsel from people who know Him, and through a settled peace. It is rarely dramatic, and usually asks for patience more than a sign.",
+        },
+      ];
+
+      function showBanner(id, html) {
+        const el = document.getElementById(id);
+        el.classList.remove("hidden");
+        el.querySelector("div").innerHTML = html;
+      }
+      function hideBanner(id) {
+        document.getElementById(id).classList.add("hidden");
+      }
+
+      let currentView = "home";
+      function go(view, articleId) {
+        currentView = view;
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("active"));
+        document.getElementById("view-" + view).classList.add("active");
+        document
+          .querySelectorAll("nav a")
+          .forEach((a) => a.classList.remove("active"));
+        const navA = document.querySelector(`nav a[data-view="${view}"]`);
+        if (navA) navA.classList.add("active");
+        window.scrollTo({ top: 0, behavior: "instant" });
+        if (view === "home") renderFeed();
+        if (view === "qa") renderQA();
+        if (view === "article") renderArticle(articleId);
+      }
+
+      function toggleAccessMode() {
+        document.body.classList.toggle("access-mode");
+        const on = document.body.classList.contains("access-mode");
+        document.getElementById("accessToggle").textContent = on
+          ? "Normal Print"
+          : "Large Print";
+      }
+
+      function speak(text, btnEl) {
+        if (!("speechSynthesis" in window)) {
+          alert("Text-to-speech is not supported in this browser.");
+          return;
+        }
+        if (speechSynthesis.speaking) {
+          speechSynthesis.cancel();
+          if (btnEl) btnEl.textContent = "🔊 Listen";
+          return;
+        }
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.95;
+        utter.onend = () => {
+          if (btnEl) btnEl.textContent = "🔊 Listen";
+        };
+        speechSynthesis.speak(utter);
+        if (btnEl) btnEl.textContent = "⏹ Stop";
+      }
+      function listenButton(text) {
+        return `<button class="btn small listen-btn" onclick="speak(${JSON.stringify(text)}, this)">🔊 Listen</button>`;
+      }
+
+      async function fetchJSON(path) {
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 3500);
+          const res = await fetch(`${API_BASE}${path}`, {
+            signal: controller.signal,
+          });
+          clearTimeout(timeout);
+          if (!res.ok) throw new Error("bad status");
+          return await res.json();
+        } catch (e) {
+          return null;
+        }
+      }
+
+      const BACKEND_NOTICE = `<strong>Preview content.</strong> Your backend isn't reachable yet at <code>${API_BASE}</code>, so you're seeing sample posts instead of live ones. Deploy the backend from the <code>word-backend</code> folder and update <code>API_BASE</code> in this file to go live.`;
+
+      let articlesCache = [];
+      async function renderFeed() {
+        const list = document.getElementById("feedList");
+        list.innerHTML = '<p class="hint">Loading the feed…</p>';
+        const data = await fetchJSON("/api/articles");
+        if (data === null) {
+          showBanner("feedBanner", BACKEND_NOTICE);
+          articlesCache = SAMPLE_ARTICLES;
+        } else {
+          hideBanner("feedBanner");
+          articlesCache = data;
+        }
+        if (articlesCache.length === 0) {
+          list.innerHTML =
+            '<div class="empty-state">Nothing published yet. Check back soon.</div>';
+          return;
+        }
+        list.innerHTML = "";
+        articlesCache
+          .slice()
+          .reverse()
+          .forEach((a) => {
+            const div = document.createElement("div");
+            div.className = "article-card";
+            div.onclick = () => go("article", a.id);
+            div.innerHTML = `
+        <span class="pill">${a.tag}</span>
+        <h3>${escapeHtml(a.title)}</h3>
+        <p>${escapeHtml(a.body).slice(0, 160)}${a.body.length > 160 ? "…" : ""}</p>
+        <div class="article-meta">${new Date(a.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</div>
+      `;
+            list.appendChild(div);
+          });
+      }
+
+      function renderArticle(id) {
+        const a = articlesCache.find((x) => x.id === id);
+        const el = document.getElementById("articleContent");
+        if (!a) {
+          el.innerHTML = '<div class="empty-state">Article not found.</div>';
+          return;
+        }
+        el.innerHTML = `
+      <span class="pill">${a.tag}</span>
+      <h2>${escapeHtml(a.title)}</h2>
+      <div class="article-meta">${new Date(a.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</div>
+      <div class="body-text">${escapeHtml(a.body)}</div>
+      ${listenButton(a.title + ". " + a.body)}
+      <div class="interact-mount"></div>
+    `;
+        renderInteractions(
+          "article",
+          a.id,
+          el.querySelector(".interact-mount"),
+        );
+      }
+
+      async function renderQA() {
+        const list = document.getElementById("qaList");
+        list.innerHTML = '<p class="hint">Loading questions…</p>';
+        const data = await fetchJSON("/api/qa");
+        let items;
+        if (data === null) {
+          showBanner("qaBanner", BACKEND_NOTICE);
+          items = SAMPLE_QA;
+        } else {
+          hideBanner("qaBanner");
+          items = data;
+        }
+        if (items.length === 0) {
+          list.innerHTML =
+            '<div class="empty-state">No questions posted yet. Check back soon.</div>';
+          return;
+        }
+        list.innerHTML = "";
+        items
+          .slice()
+          .reverse()
+          .forEach((q) => {
+            const div = document.createElement("div");
+            div.className = "qa-card";
+            div.innerHTML = `
+        <span class="pill">${q.tag}</span>
+        <div class="q">${escapeHtml(q.question)}</div>
+        <div class="a">${escapeHtml(q.answer)}</div>
+        ${listenButton(q.question + ". " + q.answer)}
+        <div class="interact-mount"></div>
+      `;
+            list.appendChild(div);
+            renderInteractions(
+              "qa",
+              q.id,
+              div.querySelector(".interact-mount"),
+            );
+          });
+      }
+
+      async function loadVerse(preset) {
+        const ref = preset || document.getElementById("bibleRef").value.trim();
+        const translation = document.getElementById("bibleTranslation").value;
+        const resultEl = document.getElementById("bibleResult");
+        resultEl.className = "bible-result";
+        if (!ref) {
+          resultEl.innerHTML =
+            '<p class="hint">Enter a reference above, or choose one of the quick links.</p>';
+          return;
+        }
+        if (preset) document.getElementById("bibleRef").value = preset;
+        resultEl.innerHTML = '<p class="hint">Fetching scripture…</p>';
+        try {
+          const url = `https://bible-api.com/${encodeURIComponent(ref)}?translation=${translation}`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error("not found");
+          const data = await res.json();
+          if (!data || !data.text) {
+            throw new Error("empty");
+          }
+          const cleanText = data.text.trim().replace(/\n+/g, " ");
+          const refLabel = data.reference || ref;
+          const slug = slugify(`${translation}-${refLabel}`);
+          resultEl.classList.add("theme-" + pickTheme(slug));
+          resultEl.innerHTML = `
+        <div class="bible-ref">${escapeHtml(refLabel)} · ${translation.toUpperCase()}</div>
+        <div class="bible-text">"${escapeHtml(cleanText)}"</div>
+        ${listenButton(cleanText)}
+        <div class="interact-mount"></div>
+      `;
+          renderInteractions(
+            "bible",
+            slug,
+            resultEl.querySelector(".interact-mount"),
+          );
+        } catch (e) {
+          resultEl.innerHTML = `<p class="hint">Could not find that reference. Try a format like "John 3:16" or "Psalm 23".</p>`;
+        }
+      }
+
+      async function submitQuestion() {
+        const question = document.getElementById("askQuestion").value.trim();
+        const name = document.getElementById("askName").value.trim();
+        const honeypot = document.getElementById("askHoneypot").value;
+        const status = document.getElementById("askStatus");
+        status.classList.remove("error");
+
+        if (question.length < 5) {
+          status.textContent = "Please write a full question.";
+          status.classList.add("error");
+          return;
+        }
+        status.textContent = "Submitting…";
+        try {
+          const res = await fetch(`${API_BASE}/api/questions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question, name, honeypot }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || "Something went wrong.");
+          }
+          status.textContent =
+            "Thank you — your question has been submitted and will be answered soon.";
+          document.getElementById("askQuestion").value = "";
+          document.getElementById("askName").value = "";
+        } catch (e) {
+          status.textContent = `Your backend isn't reachable at ${API_BASE} yet, so this can't be submitted live. (In preview mode, submissions aren't saved.) Deploy the backend to enable this.`;
+          status.classList.add("error");
+        }
+      }
+
+      /* ---------- Likes, comments, share ---------- */
+      const likedSet = new Set(); // in-memory only — light deterrent against repeat-click likes this session
+
+      function slugify(str) {
+        return str
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
+      }
+      function pickTheme(seedStr) {
+        const themes = ["dawn", "night", "forest", "desert", "ocean"];
+        let h = 0;
+        for (let i = 0; i < seedStr.length; i++) {
+          h = (h * 31 + seedStr.charCodeAt(i)) >>> 0;
+        }
+        return themes[h % themes.length];
+      }
+
+      function renderCommentList(comments) {
+        if (!comments || comments.length === 0)
+          return '<p class="no-comments">No comments yet — be the first.</p>';
+        return comments
+          .slice()
+          .reverse()
+          .map(
+            (c) => `
+      <div class="comment-item">
+        <span class="cname">${escapeHtml(c.name)}</span><span class="ctime">${new Date(c.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+        <div class="ctext">${escapeHtml(c.text)}</div>
+      </div>
+    `,
+          )
+          .join("");
+      }
+
+      async function renderInteractions(type, id, mountEl) {
+        if (!mountEl) return;
+        mountEl.innerHTML = '<p class="hint">Loading…</p>';
+        let data = { likes: 0, comments: [] };
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/interactions?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`,
+          );
+          if (res.ok) data = await res.json();
+        } catch (e) {
+          /* preview mode — show empty state, still usable */
+        }
+
+        const key = `${type}:${id}`;
+        const alreadyLiked = likedSet.has(key);
+
+        mountEl.innerHTML = `
+      <div class="interact-bar">
+        <button class="interact-btn like-btn ${alreadyLiked ? "liked" : ""}" ${alreadyLiked ? "disabled" : ""}>❤ <span class="like-count">${data.likes}</span></button>
+        <button class="interact-btn share-btn">🔗 Share</button>
+      </div>
+      <div class="comments-section">
+        <div class="comments-heading">Comments (${data.comments.length})</div>
+        <div class="comment-list">${renderCommentList(data.comments)}</div>
+        <div class="comment-form">
+          <input type="text" class="cname" placeholder="Your name (optional)">
+          <textarea class="ctext" placeholder="Add a comment…" maxlength="800"></textarea>
+          <input type="text" class="chp" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button class="btn small post-comment-btn">Post Comment</button>
+            <span class="comment-status"></span>
+          </div>
+        </div>
+      </div>
+    `;
+
+        mountEl
+          .querySelector(".like-btn")
+          .addEventListener("click", () => handleLike(type, id, mountEl));
+        mountEl
+          .querySelector(".share-btn")
+          .addEventListener("click", (e) =>
+            handleShare(type, id, e.currentTarget),
+          );
+        mountEl
+          .querySelector(".post-comment-btn")
+          .addEventListener("click", () => submitComment(type, id, mountEl));
+      }
+
+      async function handleLike(type, id, mountEl) {
+        const key = `${type}:${id}`;
+        if (likedSet.has(key)) return;
+        likedSet.add(key);
+        const btn = mountEl.querySelector(".like-btn");
+        btn.disabled = true;
+        btn.classList.add("liked");
+        try {
+          const res = await fetch(`${API_BASE}/api/interactions/like`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type, id }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            mountEl.querySelector(".like-count").textContent = data.likes;
+          }
+        } catch (e) {
+          const countEl = mountEl.querySelector(".like-count");
+          countEl.textContent = (parseInt(countEl.textContent) || 0) + 1; // optimistic, preview mode
+        }
+      }
+
+      function handleShare(type, id, btnEl) {
+        const url = `${location.origin}${location.pathname}#${type}:${encodeURIComponent(id)}`;
+        const done = () => {
+          const original = btnEl.textContent;
+          btnEl.textContent = "✓ Link Copied";
+          setTimeout(() => {
+            btnEl.textContent = original;
+          }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(url)
+            .then(done)
+            .catch(() => prompt("Copy this link:", url));
+        } else {
+          prompt("Copy this link:", url);
+        }
+      }
+
+      async function submitComment(type, id, mountEl) {
+        const nameEl = mountEl.querySelector(".cname");
+        const textEl = mountEl.querySelector(".ctext");
+        const hpEl = mountEl.querySelector(".chp");
+        const statusEl = mountEl.querySelector(".comment-status");
+        const text = textEl.value.trim();
+        statusEl.classList.remove("error");
+        if (!text) {
+          statusEl.textContent = "Write something first.";
+          statusEl.classList.add("error");
+          return;
+        }
+        statusEl.textContent = "Posting…";
+        try {
+          const res = await fetch(`${API_BASE}/api/interactions/comment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              type,
+              id,
+              name: nameEl.value.trim(),
+              text,
+              honeypot: hpEl.value,
+            }),
+          });
+          if (!res.ok) {
+            const d = await res.json().catch(() => ({}));
+            throw new Error(d.error || "Failed to post.");
+          }
+          renderInteractions(type, id, mountEl);
+        } catch (e) {
+          statusEl.textContent = `Backend not reachable — comment can't be saved in preview mode.`;
+          statusEl.classList.add("error");
+        }
+      }
+
+      function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      function handleInitialHash() {
+        const h = decodeURIComponent(location.hash.slice(1));
+        if (!h) return;
+        const sep = h.indexOf(":");
+        if (sep === -1) return;
+        const type = h.slice(0, sep);
+        const id = h.slice(sep + 1);
+        if (type === "article") go("article", id);
+        else if (type === "qa") go("qa");
+        else if (type === "bible") go("bible");
+      }
+
+      renderFeed().then(handleInitialHash);
+    </script>
+  </body>
+</html>

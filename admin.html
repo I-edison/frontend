@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — The Illuminated Word</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,500&family=Source+Serif+4:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#f3efe4; --night:#11162a; --night-deep:#0c0f1d;
+    --gold:#d9b44a; --gold-soft:#f0d488; --ember:#c1633e; --line:rgba(217,180,74,0.22);
+    --surface: rgba(255,255,255,0.045); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--night); color:var(--parchment); font-family:'Source Serif 4',serif; min-height:100vh;}
+  header{padding:22px 6vw; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
+  .brand{font-family:'Fraunces',serif; font-weight:600; font-size:1.25rem; letter-spacing:-0.01em;}
+  main{max-width:640px; margin:0 auto; padding:60px 6vw;}
+  .title{font-family:'Fraunces',serif; font-weight:600; font-size:1.9rem; margin-bottom:8px; letter-spacing:-0.01em;}
+  .note{color:rgba(243,239,228,0.6); font-size:0.92rem; margin-bottom:28px; line-height:1.6;}
+  label{font-family:'Inter',sans-serif; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold-soft); display:block; margin-bottom:6px;}
+  input, textarea, select{width:100%; background:var(--surface); border:1px solid var(--line); color:var(--parchment); font-family:'Source Serif 4',serif; font-size:0.95rem; padding:12px 14px; border-radius:10px; outline:none;}
+  textarea{min-height:160px; resize:vertical;}
+  .field{margin-bottom:18px;}
+  .btn{font-family:'Inter',sans-serif; font-weight:600; font-size:0.8rem; letter-spacing:0.02em; padding:11px 22px; border-radius:999px; cursor:pointer; border:1px solid var(--gold-soft); background:var(--gold-soft); color:var(--night-deep); transition:all .2s;}
+  .btn:hover{background:var(--gold); transform:translateY(-1px);}
+  .btn.ghost{background:transparent; color:var(--gold-soft);}
+  .status{font-family:'Inter',sans-serif; font-size:0.82rem; margin-top:12px; color:#7fae7f; min-height:1.2em;}
+  .status.error{color:var(--ember);}
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .tabs{display:flex; gap:8px; margin-bottom:26px; font-family:'Inter',sans-serif; font-size:0.78rem; font-weight:500; text-transform:uppercase; letter-spacing:0.04em;}
+  .tabs button{background:none; border:1px solid transparent; color:rgba(243,239,228,0.55); cursor:pointer; padding:9px 14px; border-radius:999px; transition:all .18s;}
+  .tabs button:hover{background:var(--surface);}
+  .tabs button.active{color:var(--night-deep); background:var(--gold-soft); font-weight:600;}
+  .list-item{border:1px solid var(--line); background:var(--surface); padding:16px 18px; border-radius:var(--radius); margin-bottom:10px; display:flex; justify-content:space-between; gap:14px; align-items:flex-start;}
+  .list-item .meta{font-family:'Inter',sans-serif; font-size:0.7rem; color:var(--gold-soft); text-transform:uppercase; letter-spacing:0.05em;}
+  .list-item h4{margin:6px 0 0; font-family:'Fraunces',serif; font-weight:600; font-size:1.1rem;}
+  .del{background:none; border:1px solid var(--ember); color:var(--ember); font-family:'Inter',sans-serif; font-size:0.68rem; padding:6px 12px; border-radius:999px; cursor:pointer; flex-shrink:0;}
+  .del:hover{background:rgba(193,99,62,0.15);}
+  .api-config{font-family:'Inter',sans-serif; font-size:0.72rem; color:rgba(243,239,228,0.4); margin-top:40px; border-top:1px solid var(--line); padding-top:16px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">The Illuminated Word — Admin</div>
+  <button class="btn ghost" id="logoutBtn" style="display:none;" onclick="logout()">Log Out</button>
+</header>
+
+<main>
+
+  <!-- LOGIN -->
+  <div class="panel active" id="loginPanel">
+    <div class="title">Admin Login</div>
+    <p class="note">Authenticated against the backend server — not a client-side passcode.</p>
+    <div class="field"><label>Username</label><input id="loginUser" type="text" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter') login()"></div>
+    <button class="btn" onclick="login()">Log In</button>
+    <div class="status" id="loginStatus"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="panel" id="dashPanel">
+    <div class="title">Publish</div>
+    <div class="tabs">
+      <button class="active" data-tab="pending" onclick="switchTab('pending')">Pending Questions <span id="pendingCount" style="display:none; background:var(--ember); color:#fff; border-radius:999px; padding:1px 7px; font-size:0.68rem; margin-left:4px;"></span></button>
+      <button data-tab="article" onclick="switchTab('article')">New Article</button>
+      <button data-tab="qa" onclick="switchTab('qa')">New Q&A</button>
+      <button data-tab="manage" onclick="switchTab('manage')">Manage Posted Content</button>
+      <button data-tab="comments" onclick="switchTab('comments')">Comments</button>
+    </div>
+
+    <div id="tab-pending">
+      <p class="note">Questions submitted by visitors. Answer to publish them to the public Q&A page, or discard.</p>
+      <div id="pendingList"></div>
+    </div>
+
+    <div id="tab-article" style="display:none;">
+      <div class="field"><label>Title</label><input id="aTitle" type="text"></div>
+      <div class="field"><label>Category</label>
+        <select id="aTag"><option>Reflection</option><option>Teaching</option><option>Testimony</option><option>Prayer</option><option>Study</option></select>
+      </div>
+      <div class="field"><label>Body</label><textarea id="aBody"></textarea></div>
+      <button class="btn" onclick="submitArticle()">Publish Article</button>
+      <div class="status" id="aStatus"></div>
+    </div>
+
+    <div id="tab-qa" style="display:none;">
+      <div class="field"><label>Category</label>
+        <select id="qTag"><option>Salvation</option><option>Doctrine</option><option>Daily Life</option><option>Prayer</option><option>Difficult Passages</option></select>
+      </div>
+      <div class="field"><label>Question</label><input id="qQuestion" type="text"></div>
+      <div class="field"><label>Answer</label><textarea id="qAnswer"></textarea></div>
+      <button class="btn" onclick="submitQA()">Publish Q&A</button>
+      <div class="status" id="qStatus"></div>
+    </div>
+
+    <div id="tab-manage" style="display:none;">
+      <p class="note" style="margin-bottom:16px;">Articles</p>
+      <div id="manageArticles"></div>
+      <p class="note" style="margin:26px 0 16px;">Q&A</p>
+      <div id="manageQA"></div>
+    </div>
+
+    <div id="tab-comments" style="display:none;">
+      <p class="note">All comments left on articles, Q&A, and Bible verses, newest first.</p>
+      <div id="commentsList"></div>
+    </div>
+  </div>
+
+  <div class="api-config">
+    API endpoint: <code id="apiUrlLabel"></code> — change this by editing <code>API_BASE</code> near the top of the script in this file.
+  </div>
+</main>
+
+<script>
+  // Set this to your deployed backend URL, e.g. 'https://your-app.onrender.com'
+  const API_BASE = 'https://faith-institute.onrender.com/';
+  document.getElementById('apiUrlLabel').textContent = API_BASE;
+
+  let token = null; // kept in memory only — clears on page reload, no localStorage used
+
+  function setStatus(id, msg, isError){
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.toggle('error', !!isError);
+  }
+
+  async function login(){
+    const username = document.getElementById('loginUser').value.trim();
+    const password = document.getElementById('loginPass').value;
+    setStatus('loginStatus', 'Logging in…', false);
+    try{
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if(!res.ok){
+        setStatus('loginStatus', data.error || 'Login failed.', true);
+        return;
+      }
+      token = data.token;
+      document.getElementById('loginPanel').classList.remove('active');
+      document.getElementById('dashPanel').classList.add('active');
+      document.getElementById('logoutBtn').style.display = 'inline-block';
+      setStatus('loginStatus', '', false);
+      loadPending();
+    }catch(e){
+      setStatus('loginStatus', 'Could not reach the backend. Check API_BASE and that the server is running.', true);
+    }
+  }
+
+  function logout(){
+    token = null;
+    document.getElementById('dashPanel').classList.remove('active');
+    document.getElementById('loginPanel').classList.add('active');
+    document.getElementById('logoutBtn').style.display = 'none';
+    document.getElementById('loginPass').value = '';
+  }
+
+  function switchTab(name){
+    document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+    document.getElementById('tab-pending').style.display = name==='pending' ? 'block':'none';
+    document.getElementById('tab-article').style.display = name==='article' ? 'block':'none';
+    document.getElementById('tab-qa').style.display = name==='qa' ? 'block':'none';
+    document.getElementById('tab-manage').style.display = name==='manage' ? 'block':'none';
+    document.getElementById('tab-comments').style.display = name==='comments' ? 'block':'none';
+    if(name==='manage') loadManageLists();
+    if(name==='pending') loadPending();
+    if(name==='comments') loadComments();
+  }
+
+  async function authedFetch(path, options={}){
+    const res = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...(options.headers||{})
+      }
+    });
+    if(res.status === 401){
+      alert('Your session expired. Please log in again.');
+      logout();
+      throw new Error('unauthorized');
+    }
+    return res;
+  }
+
+  async function submitArticle(){
+    const title = document.getElementById('aTitle').value.trim();
+    const tag = document.getElementById('aTag').value;
+    const body = document.getElementById('aBody').value.trim();
+    if(!title || !body){ setStatus('aStatus','Title and body are required.', true); return; }
+    setStatus('aStatus','Publishing…', false);
+    try{
+      const res = await authedFetch('/api/articles', { method:'POST', body: JSON.stringify({title, tag, body}) });
+      if(!res.ok) throw new Error();
+      setStatus('aStatus','Published.', false);
+      document.getElementById('aTitle').value='';
+      document.getElementById('aBody').value='';
+    }catch(e){
+      setStatus('aStatus','Failed to publish.', true);
+    }
+  }
+
+  async function submitQA(){
+    const tag = document.getElementById('qTag').value;
+    const question = document.getElementById('qQuestion').value.trim();
+    const answer = document.getElementById('qAnswer').value.trim();
+    if(!question || !answer){ setStatus('qStatus','Question and answer are required.', true); return; }
+    setStatus('qStatus','Publishing…', false);
+    try{
+      const res = await authedFetch('/api/qa', { method:'POST', body: JSON.stringify({question, answer, tag}) });
+      if(!res.ok) throw new Error();
+      setStatus('qStatus','Published.', false);
+      document.getElementById('qQuestion').value='';
+      document.getElementById('qAnswer').value='';
+    }catch(e){
+      setStatus('qStatus','Failed to publish.', true);
+    }
+  }
+
+  async function loadManageLists(){
+    const artEl = document.getElementById('manageArticles');
+    const qaEl = document.getElementById('manageQA');
+    artEl.innerHTML = 'Loading…';
+    qaEl.innerHTML = 'Loading…';
+    try{
+      const [articles, qa] = await Promise.all([
+        fetch(`${API_BASE}/api/articles`).then(r=>r.json()),
+        fetch(`${API_BASE}/api/qa`).then(r=>r.json())
+      ]);
+      artEl.innerHTML = articles.length ? '' : '<p class="note">No articles yet.</p>';
+      articles.slice().reverse().forEach(a=>{
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `<div><div class="meta">${a.tag}</div><h4>${a.title}</h4></div>
+          <button class="del" onclick="deleteArticle('${a.id}')">Delete</button>`;
+        artEl.appendChild(div);
+      });
+      qaEl.innerHTML = qa.length ? '' : '<p class="note">No Q&A yet.</p>';
+      qa.slice().reverse().forEach(q=>{
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `<div><div class="meta">${q.tag}</div><h4>${q.question}</h4></div>
+          <button class="del" onclick="deleteQA('${q.id}')">Delete</button>`;
+        qaEl.appendChild(div);
+      });
+    }catch(e){
+      artEl.innerHTML = '<p class="note">Could not load content.</p>';
+      qaEl.innerHTML = '';
+    }
+  }
+
+  async function loadPending(){
+    const el = document.getElementById('pendingList');
+    el.innerHTML = 'Loading…';
+    try{
+      const res = await authedFetch('/api/questions/pending');
+      const items = await res.json();
+      const badge = document.getElementById('pendingCount');
+      if(items.length > 0){ badge.style.display='inline-block'; badge.textContent = items.length; }
+      else { badge.style.display='none'; }
+
+      if(items.length === 0){ el.innerHTML = '<p class="note">No pending questions right now.</p>'; return; }
+      el.innerHTML = '';
+      items.slice().reverse().forEach(p=>{
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.style.flexDirection = 'column';
+        div.style.alignItems = 'stretch';
+        div.innerHTML = `
+          <div>
+            <div class="meta">${p.name ? 'From ' + escapeHtml(p.name) : 'Anonymous'} · ${new Date(p.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+            <h4>${escapeHtml(p.question)}</h4>
+          </div>
+          <div class="field" style="margin-top:14px;">
+            <label>Category</label>
+            <select id="tag-${p.id}"><option>Salvation</option><option>Doctrine</option><option>Daily Life</option><option>Prayer</option><option>Difficult Passages</option></select>
+          </div>
+          <div class="field">
+            <label>Answer</label>
+            <textarea id="answer-${p.id}" placeholder="Write a clear, grounded answer…"></textarea>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn" onclick="answerPending('${p.id}')">Answer & Publish</button>
+            <button class="del" onclick="discardPending('${p.id}')">Discard</button>
+          </div>
+          <div class="status" id="pstatus-${p.id}"></div>
+        `;
+        el.appendChild(div);
+      });
+    }catch(e){
+      el.innerHTML = '<p class="note">Could not load pending questions.</p>';
+    }
+  }
+
+  async function answerPending(id){
+    const answer = document.getElementById(`answer-${id}`).value.trim();
+    const tag = document.getElementById(`tag-${id}`).value;
+    const statusEl = document.getElementById(`pstatus-${id}`);
+    if(!answer){ statusEl.textContent = 'Please write an answer first.'; statusEl.classList.add('error'); return; }
+    statusEl.textContent = 'Publishing…'; statusEl.classList.remove('error');
+    try{
+      const res = await authedFetch(`/api/questions/pending/${id}/answer`, { method:'POST', body: JSON.stringify({ answer, tag }) });
+      if(!res.ok) throw new Error();
+      loadPending();
+    }catch(e){
+      statusEl.textContent = 'Failed to publish.'; statusEl.classList.add('error');
+    }
+  }
+
+  async function discardPending(id){
+    if(!confirm('Discard this question without answering it?')) return;
+    await authedFetch(`/api/questions/pending/${id}`, { method:'DELETE' });
+    loadPending();
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function loadComments(){
+    const el = document.getElementById('commentsList');
+    el.innerHTML = 'Loading…';
+    try{
+      const res = await authedFetch('/api/interactions/all-comments');
+      const items = await res.json();
+      if(items.length === 0){ el.innerHTML = '<p class="note">No comments yet.</p>'; return; }
+      el.innerHTML = '';
+      items.forEach(c=>{
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+          <div>
+            <div class="meta">${c.type.toUpperCase()} · ${escapeHtml(c.name)} · ${new Date(c.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+            <h4 style="font-family:'Source Serif 4',serif; font-weight:400; font-size:0.95rem;">${escapeHtml(c.text)}</h4>
+          </div>
+          <button class="del" onclick="deleteComment(${JSON.stringify(c.type)}, ${JSON.stringify(c.postId)}, ${JSON.stringify(c.id)})">Delete</button>
+        `;
+        el.appendChild(div);
+      });
+    }catch(e){
+      el.innerHTML = '<p class="note">Could not load comments.</p>';
+    }
+  }
+
+  async function deleteComment(type, id, commentId){
+    if(!confirm('Delete this comment?')) return;
+    await authedFetch('/api/interactions/comment', { method:'DELETE', body: JSON.stringify({ type, id, commentId }) });
+    loadComments();
+  }
+
+  async function deleteArticle(id){
+    if(!confirm('Delete this article?')) return;
+    await authedFetch(`/api/articles/${id}`, { method:'DELETE' });
+    loadManageLists();
+  }
+  async function deleteQA(id){
+    if(!confirm('Delete this Q&A?')) return;
+    await authedFetch(`/api/qa/${id}`, { method:'DELETE' });
+    loadManageLists();
+  }
+</script>
+
+</body>
+</html>
